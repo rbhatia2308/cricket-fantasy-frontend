@@ -1,3 +1,4 @@
+// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
@@ -6,15 +7,17 @@ import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<h1>Cricket Fantasy App</h1>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
 export default App;
+
 
