@@ -4,7 +4,7 @@ function App() {
   return (
     <div>
       <h1>Welcome to Cricket Fantasy</h1>
-      <p>Login to get started!</p>
+      <p>App is working!</p>
     </div>
   );
 }
