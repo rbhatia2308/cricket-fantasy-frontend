@@ -1,33 +1,32 @@
 import React from "react";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate();
-
-const provider = new GoogleAuthProvider();
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
     try {
-        navigate("/dashboard");
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      alert(`Welcome ${user.displayName}`);
-      // You can redirect to home or dashboard here
+      await signInWithPopup(auth, provider);
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Google sign-in error:", error.message);
-      alert("Login failed");
+      console.error("Login failed", error);
     }
   };
 
   return (
     <div>
-      <h2>Login with Google</h2>
+      <h2>Login Page</h2>
       <button onClick={handleGoogleLogin}>Sign in with Google</button>
     </div>
   );
 }
+
+export default Login;
 
 export default Login;
 
