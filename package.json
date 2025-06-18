@@ -7,10 +7,10 @@
     "build": "react-scripts build"
   },
   "dependencies": {
-    "firebase": "^9.0.0",
+    "firebase": "^9.23.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.0.0",
+    "react-router-dom": "^6.30.1",
     "react-scripts": "^5.0.1"
   },
   "browserslist": {
