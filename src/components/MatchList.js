@@ -49,30 +49,30 @@ function MatchList() {
               key={index}
               className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-all"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <img
                   src={getLogoPath(match.t1)}
                   alt={match.t1}
-                  className="w-10 h-10 object-contain"
+                  className="w-6 h-6 object-contain"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
                   }}
                 />
-                <span className="text-lg font-semibold text-gray-800">{match.t1}</span>
+                <span className="text-base font-semibold text-gray-800">{match.t1}</span>
               </div>
 
-              <div className="flex items-center space-x-4 mt-2">
+              <div className="flex items-center space-x-2 mt-2">
                 <img
                   src={getLogoPath(match.t2)}
                   alt={match.t2}
-                  className="w-10 h-10 object-contain"
+                  className="w-6 h-6 object-contain"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
                   }}
                 />
-                <span className="text-lg font-semibold text-gray-800">{match.t2}</span>
+                <span className="text-base font-semibold text-gray-800">{match.t2}</span>
               </div>
 
               <p className="text-blue-700 mt-3 font-medium">{match.status}</p>
