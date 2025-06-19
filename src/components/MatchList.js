@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import teamNameMap from "../utils/teamNameMap";
+import HomeButton from "../components/HomeButton"; // 🔁 ✅ ADDED this import
 
 function MatchList() {
   const [matches, setMatches] = useState([]);
@@ -102,6 +103,8 @@ function MatchList() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
+      <HomeButton /> {/* 🔁 ✅ ADDED Home Button at the top of the page */}
+
       <h2 className="text-2xl font-bold text-center mb-6">Live Matches</h2>
 
       {/* 🔍 Search */}
@@ -231,3 +234,4 @@ function MatchList() {
 }
 
 export default MatchList;
+

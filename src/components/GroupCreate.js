@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { db } from "../firebase"; // Adjust path as per your project
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db } from "../firebase";
+import { collection, addDoc, Timestamp, setDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import HomeButton from "../components/HomeButton"; // ✅ Added import
 
 function CreateGroup() {
   const [groupName, setGroupName] = useState("");
@@ -9,11 +11,19 @@ function CreateGroup() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
   const handleCreateGroup = async (e) => {
     e.preventDefault();
 
     if (!groupName || !maxMembers) {
       setErrorMsg("Please fill in all fields.");
+      return;
+    }
+
+    if (!currentUser) {
+      setErrorMsg("User not logged in.");
       return;
     }
 
@@ -27,6 +37,14 @@ function CreateGroup() {
         groupName,
         maxMembers: parseInt(maxMembers, 10),
         createdAt: Timestamp.now(),
+        members: [currentUser.uid],
+      });
+
+      await setDoc(doc(db, "groups", newGroup.id, "members", currentUser.uid), {
+        uid: currentUser.uid,
+        email: currentUser.email,
+        displayName: currentUser.displayName || currentUser.email,
+        joinedAt: Timestamp.now(),
       });
 
       setSuccessMsg(`Group created successfully! Group ID: ${newGroup.id}`);
@@ -41,7 +59,12 @@ function CreateGroup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gray-100 p-4 relative">
+      {/* ✅ Home Button at top-right */}
+      <div className="absolute top-4 right-4">
+        <HomeButton />
+      </div>
+
       <h2 className="text-2xl font-bold text-center mb-6">Create a Group</h2>
 
       <form
@@ -87,4 +110,3 @@ function CreateGroup() {
 }
 
 export default CreateGroup;
-// This component allows users to create a group with a name and maximum number of members.

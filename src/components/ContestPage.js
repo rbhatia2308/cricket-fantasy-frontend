@@ -3,11 +3,14 @@ import { useLocation } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
 
+// ✅ HomeButton Import
+import HomeButton from "../components/HomeButton";
+
 const ContestPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const matchId = queryParams.get("matchId");
-  const matchName = queryParams.get("matchName") || ""; // use matchName from MatchList
+  const matchName = queryParams.get("matchName") || "";
 
   const [groups, setGroups] = useState([]);
   const [groupId, setGroupId] = useState("");
@@ -52,12 +55,13 @@ const ContestPage = () => {
         maxParticipants: parseInt(maxParticipants, 10),
         createdAt: Timestamp.now(),
       });
+
       await addDoc(collection(db, "groups", groupId, "chat"), {
         text: `🎉 New contest created: ${contestName}`,
         type: "system",
         createdAt: Timestamp.now(),
       });
-      
+
       setSuccessMsg("Contest created successfully!");
       setContestName(matchName);
       setEntryFee("");
@@ -72,7 +76,11 @@ const ContestPage = () => {
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Create Contest</h2>
+      {/* ✅ Home Button */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Create Contest</h2>
+        <HomeButton />
+      </div>
 
       {successMsg && <p className="text-green-600 mb-2">{successMsg}</p>}
       {errorMsg && <p className="text-red-600 mb-2">{errorMsg}</p>}
@@ -88,10 +96,10 @@ const ContestPage = () => {
           >
             <option value="">-- Select Group --</option>
             {groups.map((group) => (
-  <option key={group.id} value={group.id}>
-    {group.groupName || group.id}
-  </option>
-))}
+              <option key={group.id} value={group.id}>
+                {group.groupName || group.id}
+              </option>
+            ))}
           </select>
         </div>
 
