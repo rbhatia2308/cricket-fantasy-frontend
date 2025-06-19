@@ -53,7 +53,7 @@ function MatchList() {
                 <img
                   src={getLogoPath(match.t1)}
                   alt={match.t1}
-                  className="w-6 h-6 object-contain"
+                  className="max-w-[24px] max-h-[24px] object-contain"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
@@ -66,7 +66,7 @@ function MatchList() {
                 <img
                   src={getLogoPath(match.t2)}
                   alt={match.t2}
-                  className="w-6 h-6 object-contain"
+                  className="max-w-[24px] max-h-[24px] object-contain"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
