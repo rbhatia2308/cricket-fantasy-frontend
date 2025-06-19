@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import teamNameMap from "../utils/teamNameMap";
 
 function MatchList() {
   const [matches, setMatches] = useState([]);
@@ -35,10 +36,15 @@ function MatchList() {
     fetchMatches();
   }, []);
 
-  const getLogoPath = (teamName) => {
-    const cleanedName = teamName?.trim().toLowerCase().replace(/ /g, "-");
-    return `/logos/${cleanedName}.png`;
-  };
+  
+
+const getLogoPath = (teamCode) => {
+  const mappedName = teamNameMap[teamCode?.toUpperCase()];
+  const logoFileName = mappedName || "default";
+  return `/logos/${logoFileName}.png`;
+};
+
+  
 
   const getStatusBadge = (status) => {
     const statusText = status.toLowerCase();
