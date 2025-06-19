@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { db } from "../firebase";
-import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
-
-// ✅ HomeButton Import
+import {
+  collection,
+  getDocs,
+  addDoc,
+  setDoc,
+  doc,
+  Timestamp,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // ✅ Import auth
 import HomeButton from "../components/HomeButton";
 
 const ContestPage = () => {
@@ -21,11 +27,17 @@ const ContestPage = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const snapshot = await getDocs(collection(db, "groups"));
-        const fetchedGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const fetchedGroups = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setGroups(fetchedGroups);
       } catch (error) {
         console.error("Error fetching groups:", error);
@@ -43,24 +55,73 @@ const ContestPage = () => {
       return;
     }
 
+    if (!currentUser) {
+      setErrorMsg("User not authenticated.");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
 
     try {
-      const contestRef = collection(db, "groups", groupId, "matches", matchId, "contests");
-      await addDoc(contestRef, {
+      // 1. Create contest under group/match
+      const contestRef = collection(
+        db,
+        "groups",
+        groupId,
+        "matches",
+        matchId,
+        "contests"
+      );
+
+      const newContestDoc = await addDoc(contestRef, {
         contestName,
         entryFee: parseFloat(entryFee),
         maxParticipants: parseInt(maxParticipants, 10),
         createdAt: Timestamp.now(),
+        createdBy: currentUser.uid,
+        status: "upcoming",
+        matchId,
+        matchName,
+        groupId,
       });
 
+      // 2. Log contest in group chat
       await addDoc(collection(db, "groups", groupId, "chat"), {
         text: `🎉 New contest created: ${contestName}`,
         type: "system",
         createdAt: Timestamp.now(),
       });
+
+      // ✅ 3. Store contest in users/{uid}/contests/
+      await setDoc(
+        doc(db, "users", currentUser.uid, "contests", newContestDoc.id),
+        {
+          contestId: newContestDoc.id,
+          contestName,
+          entryFee: parseFloat(entryFee),
+          maxParticipants: parseInt(maxParticipants, 10),
+          createdAt: Timestamp.now(),
+          status: "upcoming",
+          matchId,
+          matchName,
+          groupId,
+        }
+      );
+
+      // ✅ 4. Auto-add creator as a participant
+await setDoc(
+    doc(db, "groups", groupId, "matches", matchId, "contests", newContestDoc.id, "participants", currentUser.uid),
+    {
+      uid: currentUser.uid,
+      email: currentUser.email,
+      displayName: currentUser.displayName || currentUser.email,
+      score: 0,
+      joinedAt: Timestamp.now(),
+    }
+  );
+  
 
       setSuccessMsg("Contest created successfully!");
       setContestName(matchName);
@@ -76,7 +137,6 @@ const ContestPage = () => {
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      {/* ✅ Home Button */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Create Contest</h2>
         <HomeButton />
