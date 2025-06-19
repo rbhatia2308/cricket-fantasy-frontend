@@ -52,6 +52,12 @@ const ContestPage = () => {
         maxParticipants: parseInt(maxParticipants, 10),
         createdAt: Timestamp.now(),
       });
+      await addDoc(collection(db, "groups", groupId, "chat"), {
+        text: `🎉 New contest created: ${contestName}`,
+        type: "system",
+        createdAt: Timestamp.now(),
+      });
+      
       setSuccessMsg("Contest created successfully!");
       setContestName(matchName);
       setEntryFee("");
