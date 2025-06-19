@@ -50,32 +50,34 @@ function MatchList() {
               className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-all"
             >
               <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 flex-shrink-0">
+              
                 <img
                   src={getLogoPath(match.t1)}
                   alt={match.t1}
-                  className="w-full h-full object-contain"
+                  className="w-8 h-8 object-contain inline-block"
+                  style={{ maxWidth: "32px", maxHeight: "32px" }}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
                   }}
                 />
-                </div>
+                
                 <span className="text-base font-semibold text-gray-800">{match.t1}</span>
               </div>
 
               <div className="flex items-center space-x-2 mt-2">
-              <div className="w-6 h-6 flex-shrink-0">
+              
                 <img
                   src={getLogoPath(match.t2)}
                   alt={match.t2}
-                  className="w-full h-full object-contain"
+                  className="w-8 h-8 object-contain inline-block"
+                    style={{ maxWidth: "32px", maxHeight: "32px" }}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/logos/default.png";
                   }}
                 />
-                </div>
+                
                 <span className="text-base font-semibold text-gray-800">{match.t2}</span>
               </div>
 
