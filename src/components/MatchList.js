@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import teamLogos from "../utils/teamLogos";
 
 function MatchList() {
   const [matches, setMatches] = useState([]);
@@ -33,9 +32,9 @@ function MatchList() {
     fetchMatches();
   }, []);
 
-  const getLogo = (teamName) => {
-    const logoName = teamName.trim().toLowerCase();
-    return teamLogos[logoName] || teamLogos.default;
+  const getLogoPath = (teamName) => {
+    const cleanedName = teamName?.trim().toLowerCase().replace(/ /g, "-");
+    return `/logos/${cleanedName}.png`;
   };
 
   return (
@@ -52,26 +51,30 @@ function MatchList() {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src={teamLogos[match.t1?.toLowerCase()]}
+                  src={getLogoPath(match.t1)}
                   alt={match.t1}
                   className="w-10 h-10 object-contain"
-                  onError={(e) => { e.target.onerror = null; e.target.src = teamLogos.default }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/logos/default.png";
+                  }}
                 />
-                <span className="text-lg font-semibold text-gray-800">
-                  {match.t1}
-                </span>
+                <span className="text-lg font-semibold text-gray-800">{match.t1}</span>
               </div>
+
               <div className="flex items-center space-x-4 mt-2">
                 <img
-                  src={teamLogos[match.t2?.toLowerCase()]}
+                  src={getLogoPath(match.t2)}
                   alt={match.t2}
                   className="w-10 h-10 object-contain"
-                  onError={(e) => { e.target.onerror = null; e.target.src = teamLogos.default }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/logos/default.png";
+                  }}
                 />
-                <span className="text-lg font-semibold text-gray-800">
-                  {match.t2}
-                </span>
+                <span className="text-lg font-semibold text-gray-800">{match.t2}</span>
               </div>
+
               <p className="text-blue-700 mt-3 font-medium">{match.status}</p>
               <p className="text-sm text-gray-500 mt-1">{match.dateTimeGMT}</p>
             </div>
