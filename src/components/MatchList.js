@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import teamNameMap from "../utils/teamNameMap";
-import HomeButton from "../components/HomeButton"; // 🔁 ✅ ADDED this import
+import HomeButton from "../components/HomeButton";
 
 function MatchList() {
   const [matches, setMatches] = useState([]);
@@ -22,7 +22,9 @@ function MatchList() {
           return;
         }
 
-        const response = await fetch(`https://api.cricapi.com/v1/cricScore?apikey=${apiKey}`);
+        const response = await fetch(
+          `https://api.cricapi.com/v1/cricScore?apikey=${apiKey}`
+        );
         const data = await response.json();
 
         if (data.status === "success") {
@@ -43,7 +45,9 @@ function MatchList() {
 
   const getLogoPath = (teamDisplayName) => {
     const abbreviationMatch = teamDisplayName?.match(/\[(.*?)\]/);
-    const abbreviation = abbreviationMatch ? abbreviationMatch[1].toUpperCase() : teamDisplayName?.toUpperCase();
+    const abbreviation = abbreviationMatch
+      ? abbreviationMatch[1].toUpperCase()
+      : teamDisplayName?.toUpperCase();
     const mappedName = teamNameMap[abbreviation];
     const logoFileName = mappedName || "default";
     return `/logos/${logoFileName.toLowerCase()}.png`;
@@ -75,11 +79,19 @@ function MatchList() {
       result = result.filter((match) => {
         const status = match.status.toLowerCase();
         if (keyword === "live") return status.includes("live");
-        if (keyword === "completed") return status.includes("complete") || status.includes("won") || status.includes("draw");
-        if (keyword === "upcoming") return (
-          status.includes("not started") || status.includes("scheduled") ||
-          status.includes("upcoming") || status.includes("fixture")
-        );
+        if (keyword === "completed")
+          return (
+            status.includes("complete") ||
+            status.includes("won") ||
+            status.includes("draw")
+          );
+        if (keyword === "upcoming")
+          return (
+            status.includes("not started") ||
+            status.includes("scheduled") ||
+            status.includes("upcoming") ||
+            status.includes("fixture")
+          );
         return true;
       });
     }
@@ -98,16 +110,27 @@ function MatchList() {
   };
 
   const handleCreateContest = (matchId, matchName) => {
-    navigate(`/create-contest?matchId=${matchId}&matchName=${encodeURIComponent(matchName)}`);
+    navigate(
+      `/create-contest?matchId=${matchId}&matchName=${encodeURIComponent(
+        matchName
+      )}`
+    );
+  };
+
+  const handleCreateTeam = (matchId, matchName) => {
+    navigate(
+      `/create-team?matchId=${matchId}&matchName=${encodeURIComponent(
+        matchName
+      )}`
+    );
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      <HomeButton /> {/* 🔁 ✅ ADDED Home Button at the top of the page */}
+      <HomeButton />
 
       <h2 className="text-2xl font-bold text-center mb-6">Live Matches</h2>
 
-      {/* 🔍 Search */}
       <div className="flex justify-center mb-4">
         <input
           type="text"
@@ -118,7 +141,6 @@ function MatchList() {
         />
       </div>
 
-      {/* Filter Buttons */}
       <div className="flex justify-center mb-4 space-x-2">
         {["All", "Live", "Completed", "Upcoming"].map((label) => {
           const isActive = filter === label;
@@ -157,7 +179,6 @@ function MatchList() {
         })}
       </div>
 
-      {/* Mobile dropdown */}
       <div className="md:hidden mb-4 text-center">
         <select
           className="px-3 py-2 border border-gray-300 rounded"
@@ -172,7 +193,6 @@ function MatchList() {
         </select>
       </div>
 
-      {/* Match Cards */}
       {loading ? (
         <p className="text-center text-gray-600">Loading matches...</p>
       ) : (
@@ -183,47 +203,85 @@ function MatchList() {
               className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-all"
             >
               <div className="flex items-center space-x-2">
-                <img
-                  src={getLogoPath(match.t1)}
-                  alt={match.t1}
-                  className="w-8 h-8 object-contain inline-block"
-                  style={{ maxWidth: "32px", maxHeight: "32px" }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/logos/default.png";
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    minWidth: 32,
+                    minHeight: 32,
+                    overflow: "hidden",
                   }}
-                />
-                <span className="text-base font-semibold text-gray-800">{match.t1}</span>
+                  className="flex-shrink-0 rounded"
+                >
+                  <img
+                    src={getLogoPath(match.t1)}
+                    alt={match.t1}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/logos/default.png";
+                    }}
+                  />
+                </div>
+                <span className="text-base font-semibold text-gray-800">
+                  {match.t1}
+                </span>
               </div>
 
               <div className="flex items-center space-x-2 mt-2">
-                <img
-                  src={getLogoPath(match.t2)}
-                  alt={match.t2}
-                  className="w-8 h-8 object-contain inline-block"
-                  style={{ maxWidth: "32px", maxHeight: "32px" }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/logos/default.png";
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    minWidth: 32,
+                    minHeight: 32,
+                    overflow: "hidden",
                   }}
-                />
-                <span className="text-base font-semibold text-gray-800">{match.t2}</span>
+                  className="flex-shrink-0 rounded"
+                >
+                  <img
+                    src={getLogoPath(match.t2)}
+                    alt={match.t2}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/logos/default.png";
+                    }}
+                  />
+                </div>
+                <span className="text-base font-semibold text-gray-800">
+                  {match.t2}
+                </span>
               </div>
 
               <div
-                className={`inline-block mt-3 px-2 py-1 text-xs font-medium rounded ${getStatusBadge(match.status)}`}
+                className={`inline-block mt-3 px-2 py-1 text-xs font-medium rounded ${getStatusBadge(
+                  match.status
+                )}`}
               >
                 {match.status}
               </div>
 
               <p className="text-sm text-gray-500 mt-1">{match.dateTimeGMT}</p>
 
-              {/* Create Contest Button */}
               <button
-                onClick={() => handleCreateContest(match.id, `${match.t1} vs ${match.t2}`)}
+                onClick={() =>
+                  handleCreateContest(match.id, `${match.t1} vs ${match.t2}`)
+                }
                 className="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-1.5 rounded-full"
               >
                 Create Contest
+              </button>
+
+              <button
+                onClick={() =>
+                  handleCreateTeam(match.id, `${match.t1} vs ${match.t2}`)
+                }
+                className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-1.5 rounded-full w-full"
+              >
+                Create Team
               </button>
             </div>
           ))}
@@ -234,4 +292,3 @@ function MatchList() {
 }
 
 export default MatchList;
-
