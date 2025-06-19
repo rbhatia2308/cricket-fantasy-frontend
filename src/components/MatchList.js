@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Added for navigation
+import { useNavigate } from "react-router-dom";
 import teamNameMap from "../utils/teamNameMap";
 
 function MatchList() {
@@ -7,8 +7,9 @@ function MatchList() {
   const [filteredMatches, setFilteredMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const navigate = useNavigate(); // ✅ Initialize navigator
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -56,11 +57,21 @@ function MatchList() {
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
-    if (newFilter === "All") {
-      setFilteredMatches(matches);
-    } else {
-      const keyword = newFilter.toLowerCase();
-      const filtered = matches.filter((match) => {
+    applyFilterAndSearch(matches, newFilter, searchQuery);
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    applyFilterAndSearch(matches, filter, query);
+  };
+
+  const applyFilterAndSearch = (matchList, filterType, query) => {
+    let result = [...matchList];
+
+    if (filterType !== "All") {
+      const keyword = filterType.toLowerCase();
+      result = result.filter((match) => {
         const status = match.status.toLowerCase();
         if (keyword === "live") return status.includes("live");
         if (keyword === "completed") return status.includes("complete") || status.includes("won") || status.includes("draw");
@@ -70,18 +81,41 @@ function MatchList() {
         );
         return true;
       });
-      setFilteredMatches(filtered);
     }
+
+    if (query.trim()) {
+      const lowerQuery = query.toLowerCase();
+      result = result.filter(
+        (match) =>
+          match.t1.toLowerCase().includes(lowerQuery) ||
+          match.t2.toLowerCase().includes(lowerQuery) ||
+          match.status.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    setFilteredMatches(result);
   };
 
-  const handleCreateContest = (matchId) => {
-    navigate(`/create-contest?matchId=${matchId}`); // ✅ Navigates with query param
+  const handleCreateContest = (matchId, matchName) => {
+    navigate(`/create-contest?matchId=${matchId}&matchName=${encodeURIComponent(matchName)}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <h2 className="text-2xl font-bold text-center mb-6">Live Matches</h2>
 
+      {/* 🔍 Search */}
+      <div className="flex justify-center mb-4">
+        <input
+          type="text"
+          placeholder="Search matches..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className="px-4 py-2 border border-gray-300 rounded-lg w-full max-w-md"
+        />
+      </div>
+
+      {/* Filter Buttons */}
       <div className="flex justify-center mb-4 space-x-2">
         {["All", "Live", "Completed", "Upcoming"].map((label) => {
           const isActive = filter === label;
@@ -120,6 +154,7 @@ function MatchList() {
         })}
       </div>
 
+      {/* Mobile dropdown */}
       <div className="md:hidden mb-4 text-center">
         <select
           className="px-3 py-2 border border-gray-300 rounded"
@@ -134,6 +169,7 @@ function MatchList() {
         </select>
       </div>
 
+      {/* Match Cards */}
       {loading ? (
         <p className="text-center text-gray-600">Loading matches...</p>
       ) : (
@@ -171,15 +207,17 @@ function MatchList() {
                 <span className="text-base font-semibold text-gray-800">{match.t2}</span>
               </div>
 
-              <div className={`inline-block mt-3 px-2 py-1 text-xs font-medium rounded ${getStatusBadge(match.status)}`}>
+              <div
+                className={`inline-block mt-3 px-2 py-1 text-xs font-medium rounded ${getStatusBadge(match.status)}`}
+              >
                 {match.status}
               </div>
 
               <p className="text-sm text-gray-500 mt-1">{match.dateTimeGMT}</p>
 
-              {/* ✅ Create Contest Button */}
+              {/* Create Contest Button */}
               <button
-                onClick={() => handleCreateContest(match.id)}
+                onClick={() => handleCreateContest(match.id, `${match.t1} vs ${match.t2}`)}
                 className="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-1.5 rounded-full"
               >
                 Create Contest
