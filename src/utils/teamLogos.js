@@ -1,10 +1,11 @@
 const teamLogos = {
-    "India": "https://example.com/logos/india.png",
-    "Australia": "https://example.com/logos/australia.png",
-    "Pakistan": "https://example.com/logos/pakistan.png",
-    "England": "https://example.com/logos/england.png",
-    // Add all other teams similarly
+    india: "https://raw.githubusercontent.com/rbhatia2308/cricket-logos/main/logos/india.png",
+    australia: "https://raw.githubusercontent.com/rbhatia2308/cricket-logos/main/logos/australia.png",
+    england: "https://raw.githubusercontent.com/rbhatia2308/cricket-logos/main/logos/england.png",
+    default: "https://raw.githubusercontent.com/rbhatia2308/cricket-logos/main/logos/default.png",
+    // ...and so on
   };
   
-  export default teamLogos;
   
+  export default teamLogos;
+// This file contains a mapping of team names to their logo URLs.  
