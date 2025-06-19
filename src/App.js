@@ -18,6 +18,7 @@ function App() {
           <Route path="/matches" element={<MatchList />} />
           <Route path="/groups/create" element={<GroupCreate />} />
         <Route path="/contests/:groupId/:matchId" element={<ContestPage />} />
+        <Route path="/create-contest" element={<ContestPage />} /> 
         </Routes>
       
     </AuthProvider>
