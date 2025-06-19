@@ -53,34 +53,76 @@ function MatchList() {
       setFilteredMatches(matches);
     } else {
       const keyword = newFilter.toLowerCase();
-      setFilteredMatches(
-        matches.filter((match) =>
-          match.status.toLowerCase().includes(keyword)
-        )
-      );
+  
+      const filtered = matches.filter((match) => {
+        const status = match.status.toLowerCase();
+  
+        if (keyword === "live") {
+          return status.includes("live");
+        } else if (keyword === "completed") {
+          return status.includes("complete") || status.includes("won") || status.includes("draw");
+        } else if (keyword === "upcoming") {
+          return (
+            status.includes("not started") ||
+            status.includes("Match not started") ||
+            status.includes("scheduled") ||
+            status.includes("upcoming") ||
+            status.includes("fixture")
+          );
+        }
+  
+        return true;
+      });
+  
+      setFilteredMatches(filtered);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <h2 className="text-2xl font-bold text-center mb-6">Live Matches</h2>
 
-      {/* Tabs */}
       <div className="flex justify-center mb-4 space-x-2">
-        {["All", "Live", "Completed", "Upcoming"].map((label) => (
-          <button
-            key={label}
-            onClick={() => handleFilterChange(label)}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              filter === label
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+  {["All", "Live", "Completed", "Upcoming"].map((label) => {
+    const isActive = filter === label;
+
+    let activeClasses = "";
+    let inactiveClasses = "";
+
+    switch (label) {
+      case "Live":
+        activeClasses = "bg-green-600 text-white";
+        inactiveClasses = "bg-green-100 text-green-800 hover:bg-green-200";
+        break;
+      case "Completed":
+        activeClasses = "bg-amber-600 text-white";
+        inactiveClasses = "bg-amber-100 text-amber-800 hover:bg-amber-200";
+        break;
+      case "Upcoming":
+        activeClasses = "bg-blue-600 text-white";
+        inactiveClasses = "bg-blue-100 text-blue-800 hover:bg-blue-200";
+        break;
+      default: // All
+        activeClasses = "bg-gray-600 text-white";
+        inactiveClasses = "bg-gray-200 text-gray-800 hover:bg-gray-300";
+    }
+
+    return (
+      <button
+        key={label}
+        onClick={() => handleFilterChange(label)}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          isActive ? activeClasses : inactiveClasses
+        }`}
+      >
+        {label}
+      </button>
+    );
+  })}
+</div>
+
+
 
       {/* Dropdown (for mobile) */}
       <div className="md:hidden mb-4 text-center">
