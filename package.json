@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "build:css": "tailwindcss -i ./src/index.css -o ./public/tailwind.generated.css",
+    "watch:css": "tailwindcss -i ./src/index.css -o ./src/tailwind.output.css --watch"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -12,8 +14,16 @@
     "lucide-react": "^0.518.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.1",
     "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.10",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.3",
+    "tailwindcss-cli": "^0.1.2"
   },
   "browserslist": {
     "production": [
